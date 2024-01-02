@@ -1,16 +1,23 @@
 import React from "react";
+import ReactConfetti from "react-confetti";
+import {styled} from 'styled-components';
 
 import { Wheel } from "~/components/Wheel";
 
 const data = [
-  { option: '0', style: { backgroundColor: 'green', textColor: 'black' } },
-  { option: '1', style: { backgroundColor: 'white' } },
-  { option: '2' },
+  { option: 'xxxx 様', style: { backgroundColor: 'moccasin', textColor: 'black' } },
+  { option: 'yyyy 様', style: { backgroundColor: 'orange', textColor: 'black' } },
+  { option: 'zzzz 様', style: { backgroundColor: 'paleturquoise', textColor: 'black' } },
+  { option: 'aaaa 様',  style: { backgroundColor: 'pink', textColor: 'black' } },
+  { option: 'bbbb 様',  style: { backgroundColor: 'skyblue', textColor: 'black' } },
+  { option: 'cccc 様',  style: { backgroundColor: 'lightgreen', textColor: 'black' } },
 ]
 
 export default function Result() {
 	const [mustSpin, setMustSpin] = React.useState(false);
 	const [prizeNumber, setPrizeNumber] = React.useState(0);
+
+	const [winner, setWinner] = React.useState('');
 
 	const handleSpinClick = () => {
 		const newSegment = Math.floor(Math.random() * data.length);
@@ -20,9 +27,21 @@ export default function Result() {
 		setMustSpin(true);
 	}
 
+	const onStopSpinning = () => {
+		setMustSpin(false);
+		setWinner(data[prizeNumber].option);
+	}
+
 	return (
 		<main className="relative h-screen">
 			<div className="absolute inset-0 flex flex-col items-center justify-center">
+				{
+					winner == '' ? null : (
+					<ReactConfetti
+						width={1920}
+						height={1080}
+					/>
+				)}
         <div className="absolute inset-0">
           <img
             className="h-full w-full object-cover"
@@ -37,23 +56,38 @@ export default function Result() {
 								抽選発表
 							</h1>
 						<hr className="w-1/2 border-gray-800 border-2 rounded-full mt-8" />
-						<div className="mt-24 space-y-16">
+						<div className="mt-12 space-y-16">
 							<div className="flex flex-row items-center justify-center gap-4">
 								<Wheel
 									mustStartSpinning={mustSpin}
 									prizeNumber={prizeNumber}
 									data={data}
-									onStopSpinning={() => setMustSpin(false)}
+									onStopSpinning={onStopSpinning}
+									fontSize={12}
+									fontWeight={300}
+									innerBorderWidth={1}
+									radiusLineWidth={1}
+									outerBorderWidth={1}
 								/>
 							</div>
 						</div>
-						<div className="mt-24 space-y-16">
-							<button
-								className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
-								onClick={handleSpinClick}
-							>
-								スピン
-							</button>
+						<div className="mt-12 space-y-16">
+						{ winner == ''  ? (
+								<button
+									className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+									onClick={handleSpinClick}
+								>
+									スピン
+								</button>
+							) : (
+								<div className="flex flex-col items-center justify-center gap-4">
+								<WinnerContainer>
+									<h1 className="text-8xl font-bold text-gray-800">
+										{winner}
+									</h1>
+								</WinnerContainer>
+								</div>
+						)}
 						</div>
 					</div>
 				</div>
@@ -61,3 +95,21 @@ export default function Result() {
 		</main>
 	);
 }
+
+const WinnerContainer = styled.div`
+	@keyframes scalefadein {
+		0% {
+			opacity: 0;
+			scale: 0;
+		}
+		80% {
+			opacity: 1;
+			scale: 3;
+		}
+		100% {
+			opacity: 1;
+			scale: 1;
+		}
+	}
+	animation: scalefadein 3s ease-in-out;
+`;
