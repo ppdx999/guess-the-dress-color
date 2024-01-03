@@ -45,7 +45,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
 };
 
-
 export default function Index() {
   const user = useOptionalUser();
 
@@ -67,14 +66,14 @@ export default function Index() {
         <div className="absolute inset-0">
           <img
             className="h-full w-full object-cover"
-            src='sunset-beach.png'
+            src="sunset-beach.png"
             alt="Sunset beach"
           />
         </div>
         <div className="relative px-4 pb-8 pt-16">
           <img
             className="mx-auto h-12 w-auto"
-            src='app-title.svg'
+            src="app-title.svg"
             alt="guess the dress color"
           />
           <div className="mx-auto mt-10 pt-24 flex justify-center">
@@ -121,7 +120,9 @@ export default function Index() {
                       type="password"
                       autoComplete="current-password"
                       placeholder="password"
-                      aria-invalid={actionData?.errors?.password ? true : undefined}
+                      aria-invalid={
+                        actionData?.errors?.password ? true : undefined
+                      }
                       aria-describedby="password-error"
                       className="flex items-center justify-center w-64 rounded-lg px-4 py-3 text-white bg-gray-700 bg-opacity-80 backdrop-filter backdrop-blur-sm"
                     />

@@ -12,7 +12,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export const action = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
-  
+
   const formData = await request.formData();
   const chosenColor = formData.get("dress");
 
@@ -22,7 +22,6 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
   return redirect("/main");
 };
 
-
 export default function ChosePage() {
   return (
     <main className="relative h-screen">
@@ -30,28 +29,18 @@ export default function ChosePage() {
         <div className="absolute inset-0 bg-gray-200" />
         <Form method="post">
           <div className="relative px-4 flex flex-col items-center space-y-16">
-            <h1 className="text-lg text-center font-bold">Choose the dress color</h1>
+            <h1 className="text-lg text-center font-bold">
+              Choose the dress color
+            </h1>
             <div className="mx-auto flex justify-center">
               <div className="space-y-4 mx-auto">
                 <div className="flex justify-center space-x-8">
                   <label>
-                    <input
-                      type="radio"
-                      name="dress"
-                      value="red"
-                    />
-                    <img
-                      src="red-dress.svg"
-                      alt="Red dress"
-                      className="w-32"
-                    />
+                    <input type="radio" name="dress" value="red" />
+                    <img src="red-dress.svg" alt="Red dress" className="w-32" />
                   </label>
                   <label>
-                    <input
-                      type="radio"
-                      name="dress"
-                      value="blue"
-                    />
+                    <input type="radio" name="dress" value="blue" />
                     <img
                       src="blue-dress.svg"
                       alt="Blue dress"
@@ -61,11 +50,7 @@ export default function ChosePage() {
                 </div>
                 <div className="flex justify-center">
                   <label>
-                    <input
-                      type="radio"
-                      name="dress"
-                      value="yellow"
-                    />
+                    <input type="radio" name="dress" value="yellow" />
                     <img
                       src="yellow-dress.svg"
                       alt="Yellow dress"

@@ -2,8 +2,7 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
-import {fromDb as choiceFromDb} from "~/models/choice.server";
-
+import { fromDb as choiceFromDb } from "~/models/choice.server";
 
 export type { User } from "@prisma/client";
 
@@ -11,12 +10,16 @@ export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }
 
-export async function createUser(id: User["id"], password: string) {
-  const hashedPassword = await bcrypt.hash(password, 10);
+export async function createUser(input: {
+  id: User["id"];
+  username: User["username"];
+  password: string;
+}) {
+  const hashedPassword = await bcrypt.hash(input.password, 10);
 
   return prisma.user.create({
     data: {
-      id,
+      ...input,
       password: {
         create: {
           hash: hashedPassword,
@@ -30,10 +33,7 @@ export async function deleteUserById(id: User["id"]) {
   return prisma.user.delete({ where: { id } });
 }
 
-export async function verifyLogin(
-  id: User["id"],
-  password: Password["hash"],
-) {
+export async function verifyLogin(id: User["id"], password: Password["hash"]) {
   const userWithPassword = await prisma.user.findUnique({
     where: { id },
     include: {
@@ -65,12 +65,16 @@ export async function getAllUsers() {
 }
 
 export async function getUsersWithChoice() {
-	return prisma.user.findMany({
-		include: {
-			choice: true,
-		},
-	}).then(users => users.map(user => ({
-		...user,
-		choice: user.choice && choiceFromDb(user.choice)
-	})));
+  return prisma.user
+    .findMany({
+      include: {
+        choice: true,
+      },
+    })
+    .then((users) =>
+      users.map((user) => ({
+        ...user,
+        choice: user.choice && choiceFromDb(user.choice),
+      })),
+    );
 }

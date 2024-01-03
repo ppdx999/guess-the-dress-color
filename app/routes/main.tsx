@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/choose");
   }
 
-  return json({choice});
+  return json({ choice });
 };
 
 export default function MainPage() {

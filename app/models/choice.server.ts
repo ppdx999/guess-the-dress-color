@@ -15,12 +15,13 @@ export const fromDb = (choice: DbChoice): Choice => ({
 });
 
 /* dress means a number stored in the database in this function */
-const toDress = (dress: DressColor): number => 
+const toDress = (dress: DressColor): number =>
   dressColor.findIndex((d) => d === dress);
 
 export function assertDressColor(text: unknown): asserts text is DressColor {
   if (typeof text !== "string") throw new Error("dressColor is not string");
-  if (!dressColor.includes(text as DressColor)) throw new Error("dressColor is not valid");
+  if (!dressColor.includes(text as DressColor))
+    throw new Error("dressColor is not valid");
 }
 
 export interface Choice {
@@ -30,20 +31,25 @@ export interface Choice {
   dressColorCode: DressColorCode;
 }
 
-export const getChoiceByUserId = async (userId: string): Promise<Choice | null> => {
+export const getChoiceByUserId = async (
+  userId: string,
+): Promise<Choice | null> => {
   const choice = await prisma.choice.findUnique({
     where: { userId },
   });
 
   if (!choice) return null;
   return fromDb(choice);
-}
+};
 
-export const chooseDress = async (userId: string, dress: DressColor): Promise<Choice> => {
+export const chooseDress = async (
+  userId: string,
+  dress: DressColor,
+): Promise<Choice> => {
   const choice = await prisma.choice.upsert({
     where: { userId },
     create: { userId, dress: toDress(dress) },
     update: { dress: toDress(dress) },
   });
   return fromDb(choice);
-}
+};
