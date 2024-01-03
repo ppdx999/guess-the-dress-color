@@ -21,7 +21,7 @@ export const loader = async () => {
 
 	const data = users.map((user, i) => {
 		return {
-			option: user.id + ' 様',
+			option: user.username + ' 様',
 			style: { backgroundColor: rouletteColors[i % rouletteColors.length], textColor: 'black' },
 		};
 	});

@@ -13,16 +13,37 @@ async function seed() {
 
   const hashedPassword = await bcrypt.hash("password", 10);
 
-  const user = await prisma.user.create({
-    data: {
+  const user = await prisma.user.upsert({
+		where: { id },
+    create: {
       id,
+			username: "鈴木一郎",
       password: {
         create: {
           hash: hashedPassword,
         },
       },
     },
+		update: {
+			username: "鈴木一郎",
+		}
   });
+
+	await prisma.user.upsert({
+		where: { id: "testuser2" },
+		create: {
+			id: "testuser2",
+			username: "佐藤二郎",
+			password: {
+				create: {
+					hash: hashedPassword,
+				},
+			},
+		},
+		update: {
+			username: "佐藤二郎",
+		}
+	});
 
   await prisma.note.create({
     data: {
