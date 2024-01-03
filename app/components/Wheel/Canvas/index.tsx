@@ -239,6 +239,7 @@ const WheelCanvas = ({
   textDistance,
 }: WheelCanvasProps): JSX.Element => {
   const canvasRef = createRef<HTMLCanvasElement>();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
   const drawWheelProps = {
     outerBorderColor,
     outerBorderWidth,

@@ -20,7 +20,17 @@ export const RouletteContainer = styled.div`
   pointer-events: none;
 `;
 
-export const RotationContainer = styled.div`
+interface RotationContainerProps {
+	startRotationDegrees: number;
+	finalRotationDegrees: number;
+	startSpinningTime: number;
+	continueSpinningTime: number;
+	stopSpinningTime: number;
+	classKey: string;
+	disableInitialAnimation: boolean;
+};
+
+export const RotationContainer = styled.div<RotationContainerProps>`
   position: absolute;
   width: 100%;
   left: 0px;

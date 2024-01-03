@@ -48,7 +48,7 @@ interface Props {
   mustStartSpinning: boolean;
   prizeNumber: number;
   data: WheelData[];
-  onStopSpinning?: () => any;
+  onStopSpinning?: () => void;
   backgroundColors?: string[];
   textColors?: string[];
   outerBorderColor?: string;
@@ -210,6 +210,7 @@ export const Wheel = ({
     setPrizeMap(auxPrizeMap);
     setStartingOption(startingOptionIndex, auxPrizeMap);
     setIsDataUpdated(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, backgroundColors, textColors]);
 
   useEffect(() => {
@@ -226,6 +227,7 @@ export const Wheel = ({
       );
       setFinalRotationDegrees(finalRotationDegreesCalculated);
     }
+		// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mustStartSpinning]);
 
   useEffect(() => {
@@ -233,6 +235,7 @@ export const Wheel = ({
       setIsCurrentlySpinning(false);
       setStartRotationDegrees(finalRotationDegrees);
     }
+		// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasStoppedSpinning]);
 
   const startSpinning = () => {

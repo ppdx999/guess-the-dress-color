@@ -17,7 +17,11 @@ async function createAndLogin(id: string) {
     throw new Error("id required for login");
   }
 
-  const user = await createUser(id, "myreallystrongpassword");
+  const user = await createUser({
+		id,
+		username: id,
+		password: "myreallystrongpassword"
+	});
 
   const response = await createUserSession({
     request: new Request("test://test"),
