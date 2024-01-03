@@ -7,13 +7,14 @@ type DressColor = (typeof dressColor)[number];
 const dressColorCode = ["bg-red-500", "bg-blue-500", "bg-yellow-500"] as const;
 type DressColorCode = (typeof dressColorCode)[number];
 
-const map = (choice: DbChoice): Choice => ({
+export const fromDb = (choice: DbChoice): Choice => ({
   id: choice.id,
   userId: choice.userId,
   dressColor: dressColor[choice.dress],
   dressColorCode: dressColorCode[choice.dress],
 });
 
+/* dress means a number stored in the database in this function */
 const toDress = (dress: DressColor): number => 
   dressColor.findIndex((d) => d === dress);
 
@@ -35,7 +36,7 @@ export const getChoiceByUserId = async (userId: string): Promise<Choice | null> 
   });
 
   if (!choice) return null;
-  return map(choice);
+  return fromDb(choice);
 }
 
 export const chooseDress = async (userId: string, dress: DressColor): Promise<Choice> => {
@@ -44,5 +45,5 @@ export const chooseDress = async (userId: string, dress: DressColor): Promise<Ch
     create: { userId, dress: toDress(dress) },
     update: { dress: toDress(dress) },
   });
-  return map(choice);
+  return fromDb(choice);
 }

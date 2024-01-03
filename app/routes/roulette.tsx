@@ -1,19 +1,36 @@
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import React from "react";
 import ReactConfetti from "react-confetti";
 
 import { ScaleFadein } from "~/components/ScaleFadein";
 import { Wheel } from "~/components/Wheel";
+import { getUsersWithChoice } from "~/models/user.server";
 
-const data = [
-  { option: 'xxxx 様', style: { backgroundColor: 'moccasin', textColor: 'black' } },
-  { option: 'yyyy 様', style: { backgroundColor: 'orange', textColor: 'black' } },
-  { option: 'zzzz 様', style: { backgroundColor: 'paleturquoise', textColor: 'black' } },
-  { option: 'aaaa 様',  style: { backgroundColor: 'pink', textColor: 'black' } },
-  { option: 'bbbb 様',  style: { backgroundColor: 'skyblue', textColor: 'black' } },
-  { option: 'cccc 様',  style: { backgroundColor: 'lightgreen', textColor: 'black' } },
-]
+const rouletteColors = [
+	'moccasin',
+	'orange',
+	'paleturquoise',
+	'pink',
+	'skyblue',
+	'lightgreen',
+];
+
+export const loader = async () => {
+	const users = await getUsersWithChoice();
+
+	const data = users.map((user, i) => {
+		return {
+			option: user.id + ' 様',
+			style: { backgroundColor: rouletteColors[i % rouletteColors.length], textColor: 'black' },
+		};
+	});
+
+	return json({data});
+};
 
 export default function Result() {
+	const { data } = useLoaderData<typeof loader>();
 	const [mustSpin, setMustSpin] = React.useState(false);
 	const [prizeNumber, setPrizeNumber] = React.useState(0);
 

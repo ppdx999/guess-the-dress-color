@@ -2,6 +2,8 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
+import {fromDb as choiceFromDb} from "~/models/choice.server";
+
 
 export type { User } from "@prisma/client";
 
@@ -56,4 +58,15 @@ export async function verifyLogin(
   const { password: _password, ...userWithoutPassword } = userWithPassword;
 
   return userWithoutPassword;
+}
+
+export async function getUsersWithChoice() {
+	return prisma.user.findMany({
+		include: {
+			choice: true,
+		},
+	}).then(users => users.map(user => ({
+		...user,
+		choice: user.choice && choiceFromDb(user.choice)
+	})));
 }
