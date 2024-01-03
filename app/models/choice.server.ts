@@ -2,6 +2,8 @@ import type { Choice as DbChoice } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
+export const answerColor = "blue";
+
 const dressColor = ["red", "blue", "yellow"] as const;
 type DressColor = (typeof dressColor)[number];
 const dressColorCode = ["bg-red-500", "bg-blue-500", "bg-yellow-500"] as const;

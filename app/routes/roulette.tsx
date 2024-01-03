@@ -1,11 +1,13 @@
 import { useWindowSize } from "@react-hook/window-size";
 import { json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import React from "react";
 import ReactConfetti from "react-confetti";
 
 import { ScaleFadein } from "~/components/ScaleFadein";
 import { Wheel } from "~/components/Wheel";
+import { answerColor } from "~/models/choice.server";
 import { getUsersWithChoice } from "~/models/user.server";
 
 const rouletteColors = [
@@ -17,18 +19,22 @@ const rouletteColors = [
   "lightgreen",
 ];
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const users = await getUsersWithChoice();
+  const url = new URL(request.url);
+  const isWinnerOnly = url.searchParams.get("filter") === "winner";
 
-  const data = users.map((user, i) => {
-    return {
-      option: user.username + " 様",
-      style: {
-        backgroundColor: rouletteColors[i % rouletteColors.length],
-        textColor: "black",
-      },
-    };
-  });
+  let data = users
+    .filter((user) => !isWinnerOnly || user.choice?.dressColor === answerColor)
+    .map((user, i) => {
+      return {
+        option: user.username + " 様",
+        style: {
+          backgroundColor: rouletteColors[i % rouletteColors.length],
+          textColor: "black",
+        },
+      };
+    });
 
   return json({ data });
 };
