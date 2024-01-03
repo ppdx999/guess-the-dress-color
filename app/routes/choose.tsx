@@ -83,7 +83,7 @@ export default function ChosePage() {
               type="submit"
               className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-700"
             >
-              CHOOSE
+              ペンライト画面にGO!
             </button>
           </div>
         </Form>
