@@ -1,7 +1,7 @@
 import React from "react";
 import ReactConfetti from "react-confetti";
-import {styled} from 'styled-components';
 
+import { ScaleFadein } from "~/components/ScaleFadein";
 import { Wheel } from "~/components/Wheel";
 
 const data = [
@@ -81,11 +81,11 @@ export default function Result() {
 								</button>
 							) : (
 								<div className="flex flex-col items-center justify-center gap-4">
-								<WinnerContainer>
+								<ScaleFadein>
 									<h1 className="text-8xl font-bold text-gray-800">
 										{winner}
 									</h1>
-								</WinnerContainer>
+								</ScaleFadein>
 								</div>
 						)}
 						</div>
@@ -95,21 +95,3 @@ export default function Result() {
 		</main>
 	);
 }
-
-const WinnerContainer = styled.div`
-	@keyframes scalefadein {
-		0% {
-			opacity: 0;
-			scale: 0;
-		}
-		80% {
-			opacity: 1;
-			scale: 3;
-		}
-		100% {
-			opacity: 1;
-			scale: 1;
-		}
-	}
-	animation: scalefadein 3s ease-in-out;
-`;
