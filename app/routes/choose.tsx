@@ -1,13 +1,15 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 
 import { chooseDress, assertDressColor } from "~/models/choice.server";
+import { getChoiceByUserId } from "~/models/choice.server";
 import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await requireUserId(request);
-  return json({});
+  const userId = await requireUserId(request);
+  const choice = await getChoiceByUserId(userId);
+  return json({ choice });
 };
 
 export const action = async ({ request }: LoaderFunctionArgs) => {
@@ -23,6 +25,8 @@ export const action = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function ChosePage() {
+  const { choice } = useLoaderData<typeof loader>();
+
   return (
     <main className="relative h-screen">
       <div className="mx-auto h-screen flex justify-center items-center">
@@ -36,11 +40,21 @@ export default function ChosePage() {
               <div className="space-y-4 mx-auto">
                 <div className="flex justify-center space-x-8">
                   <label>
-                    <input type="radio" name="dress" value="red" />
+                    <input
+                      type="radio"
+                      name="dress"
+                      value="red"
+                      defaultChecked={choice?.dressColor === "red"}
+                    />
                     <img src="red-dress.svg" alt="Red dress" className="w-32" />
                   </label>
                   <label>
-                    <input type="radio" name="dress" value="blue" />
+                    <input
+                      type="radio"
+                      name="dress"
+                      value="blue"
+                      defaultChecked={choice?.dressColor === "blue"}
+                    />
                     <img
                       src="blue-dress.svg"
                       alt="Blue dress"
@@ -50,7 +64,12 @@ export default function ChosePage() {
                 </div>
                 <div className="flex justify-center">
                   <label>
-                    <input type="radio" name="dress" value="yellow" />
+                    <input
+                      type="radio"
+                      name="dress"
+                      value="yellow"
+                      defaultChecked={choice?.dressColor === "yellow"}
+                    />
                     <img
                       src="yellow-dress.svg"
                       alt="Yellow dress"
