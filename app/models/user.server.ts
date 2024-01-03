@@ -60,6 +60,10 @@ export async function verifyLogin(
   return userWithoutPassword;
 }
 
+export async function getAllUsers() {
+  return prisma.user.findMany();
+}
+
 export async function getUsersWithChoice() {
 	return prisma.user.findMany({
 		include: {
