@@ -19,6 +19,21 @@ const rouletteColors = [
   "lightgreen",
 ];
 
+const sampleData = [
+  {
+    option: "佐藤太郎",
+    style: { backgroundColor: "moccasin", textColor: "black" },
+  },
+  {
+    option: "鈴木由美",
+    style: { backgroundColor: "orange", textColor: "black" },
+  },
+  {
+    option: "斎藤雄一",
+    style: { backgroundColor: "paleturquoise", textColor: "black" },
+  },
+];
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const users = await getUsersWithChoice();
   const url = new URL(request.url);
@@ -35,6 +50,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         },
       };
     });
+
+  if (data.length === 0) {
+    data = sampleData;
+  }
 
   return json({ data });
 };
