@@ -1,3 +1,4 @@
+import {useWindowSize} from "@react-hook/window-size";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import React from "react";
@@ -36,6 +37,8 @@ export default function Result() {
 
 	const [winner, setWinner] = React.useState('');
 
+	const [width, height] = useWindowSize();
+
 	const handleSpinClick = () => {
 		const newSegment = Math.floor(Math.random() * data.length);
 		const newPrizeNumber = newSegment === 0 ? data.length - 1 : newSegment - 1;
@@ -54,10 +57,7 @@ export default function Result() {
 			<div className="absolute inset-0 flex flex-col items-center justify-center">
 				{
 					winner == '' ? null : (
-					<ReactConfetti
-						width={1920}
-						height={1080}
-					/>
+					<ReactConfetti width={width} height={height} />
 				)}
         <div className="absolute inset-0">
           <img
