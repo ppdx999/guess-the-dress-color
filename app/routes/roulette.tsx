@@ -9,6 +9,7 @@ import { ScaleFadein } from "~/components/ScaleFadein";
 import { Wheel } from "~/components/Wheel";
 import { answerColor } from "~/models/choice.server";
 import { getUsersWithChoice } from "~/models/user.server";
+import { shuffle } from "~/utils";
 
 const rouletteColors = [
   "moccasin",
@@ -55,25 +56,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     data = sampleData;
   }
 
-  return json({ data });
+  data = shuffle(data);
+
+  return json({ data, prizeNumber: 0 });
 };
 
 export default function Result() {
-  const { data } = useLoaderData<typeof loader>();
+  const { data, prizeNumber } = useLoaderData<typeof loader>();
   const [mustSpin, setMustSpin] = React.useState(false);
-  const [prizeNumber, setPrizeNumber] = React.useState(0);
 
   const [winner, setWinner] = React.useState("");
 
   const [width, height] = useWindowSize();
 
-  const handleSpinClick = () => {
-    const newSegment = Math.floor(Math.random() * data.length);
-    const newPrizeNumber = newSegment === 0 ? data.length - 1 : newSegment - 1;
-
-    setPrizeNumber(newPrizeNumber);
-    setMustSpin(true);
-  };
+  const handleSpinClick = () => setMustSpin(true);
 
   const onStopSpinning = () => {
     setMustSpin(false);
