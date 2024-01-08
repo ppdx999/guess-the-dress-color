@@ -7,8 +7,8 @@ export const dressSchema = z.number().int().min(0).max(2);
 export type Dress = z.infer<typeof dressSchema>;
 export const colorSchema = z.enum([
   "bg-red-500",
+  "bg-green-500",
   "bg-blue-500",
-  "bg-yellow-500",
 ]);
 
 export type ColorCode = z.infer<typeof colorSchema>;
@@ -22,8 +22,8 @@ export type Choice = z.infer<typeof choiceSchema>;
 
 const dressColorMap = {
   0: "bg-red-500",
-  1: "bg-blue-500",
-  2: "bg-yellow-500",
+  1: "bg-green-500",
+  2: "bg-blue-500",
 } as const;
 
 export function dress2Color(dress: Dress) {
