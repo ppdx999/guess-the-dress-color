@@ -3,13 +3,13 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useWakeLock } from "react-screen-wake-lock";
 
-import { getChoiceByUserId } from "~/models/choice.server";
+import * as Choice from "~/models/choice.server";
 import { requireUserId } from "~/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
 
-  const choice = await getChoiceByUserId(userId);
+  const choice = await Choice.getByUserId(userId);
 
   if (!choice) {
     return redirect("/choose");
@@ -25,7 +25,7 @@ export default function MainPage() {
   return (
     <main className="relative h-screen">
       <div className="mx-auto h-screen flex justify-center items-center">
-        <div className={`absolute inset-0 ${choice.dressColorCode}`} />
+        <div className={`absolute inset-0 ${choice.color}`} />
         {released != false ? (
           <button
             className="absolute bottom-0 m-4 p-4 bg-gray-200 rounded-full"

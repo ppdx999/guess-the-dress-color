@@ -2,8 +2,7 @@ import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "~/db.server";
-import { fromDb as choiceFromDb } from "~/models/choice.server";
-
+import * as Choice from "~/models/choice.server";
 export type { User } from "@prisma/client";
 
 export async function getUserById(id: User["id"]) {
@@ -64,17 +63,15 @@ export async function getAllUsers() {
   return prisma.user.findMany();
 }
 
-export async function getUsersWithChoice() {
-  return prisma.user
+export function getWinnerUsers() {
+  return prisma.choice
     .findMany({
       include: {
-        choice: true,
+        user: true,
+      },
+      where: {
+        dress: Choice.answer,
       },
     })
-    .then((users) =>
-      users.map((user) => ({
-        ...user,
-        choice: user.choice && choiceFromDb(user.choice),
-      })),
-    );
+    .then((vs) => vs.map((v) => v.user));
 }

@@ -7,8 +7,7 @@ import ReactConfetti from "react-confetti";
 
 import { ScaleFadein } from "~/components/ScaleFadein";
 import { Wheel } from "~/components/Wheel";
-import { answerColor } from "~/models/choice.server";
-import { getUsersWithChoice } from "~/models/user.server";
+import * as User from "~/models/user.server";
 import { shuffle } from "~/utils";
 
 const rouletteColors = [
@@ -36,29 +35,26 @@ const sampleData = [
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const users = await getUsersWithChoice();
   const url = new URL(request.url);
   const isWinnerOnly = url.searchParams.get("filter") === "winner";
 
-  let data = users
-    .filter((user) => !isWinnerOnly || user.choice?.dressColor === answerColor)
-    .map((user, i) => {
-      return {
-        option: user.username + " 様",
-        style: {
-          backgroundColor: rouletteColors[i % rouletteColors.length],
-          textColor: "black",
-        },
-      };
-    });
+  const users = await (isWinnerOnly
+    ? User.getWinnerUsers()
+    : User.getAllUsers());
 
-  if (data.length === 0) {
-    data = sampleData;
-  }
+  const data = users.length
+    ? users.map((user, i) => {
+        return {
+          option: user.username + " 様",
+          style: {
+            backgroundColor: rouletteColors[i % rouletteColors.length],
+            textColor: "black",
+          },
+        };
+      })
+    : sampleData;
 
-  data = shuffle(data);
-
-  return json({ data, prizeNumber: 0 });
+  return json({ data: shuffle(data), prizeNumber: 0 });
 };
 
 export default function Result() {

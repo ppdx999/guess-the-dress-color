@@ -1,57 +1,52 @@
-import type { Choice as DbChoice } from "@prisma/client";
+import * as z from "zod";
 
 import { prisma } from "~/db.server";
 
-export const answerColor = "blue";
+export const answer = 2;
+export const dressSchema = z.number().int().min(0).max(2);
+export type Dress = z.infer<typeof dressSchema>;
+export const colorSchema = z.enum([
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-yellow-500",
+]);
 
-const dressColor = ["red", "blue", "yellow"] as const;
-type DressColor = (typeof dressColor)[number];
-const dressColorCode = ["bg-red-500", "bg-blue-500", "bg-yellow-500"] as const;
-type DressColorCode = (typeof dressColorCode)[number];
-
-export const fromDb = (choice: DbChoice): Choice => ({
-  id: choice.id,
-  userId: choice.userId,
-  dressColor: dressColor[choice.dress],
-  dressColorCode: dressColorCode[choice.dress],
+export type ColorCode = z.infer<typeof colorSchema>;
+export const choiceSchema = z.object({
+  id: z.number(),
+  dress: dressSchema,
+  userId: z.string(),
+  color: colorSchema,
 });
+export type Choice = z.infer<typeof choiceSchema>;
 
-/* dress means a number stored in the database in this function */
-const toDress = (dress: DressColor): number =>
-  dressColor.findIndex((d) => d === dress);
+const dressColorMap = {
+  0: "bg-red-500",
+  1: "bg-blue-500",
+  2: "bg-yellow-500",
+} as const;
 
-export function assertDressColor(text: unknown): asserts text is DressColor {
-  if (typeof text !== "string") throw new Error("dressColor is not string");
-  if (!dressColor.includes(text as DressColor))
-    throw new Error("dressColor is not valid");
+export function dress2Color(dress: Dress) {
+  return dressColorMap[dress as keyof typeof dressColorMap];
 }
 
-export interface Choice {
-  id: DbChoice["id"];
-  userId: DbChoice["userId"];
-  dressColor: DressColor;
-  dressColorCode: DressColorCode;
-}
-
-export const getChoiceByUserId = async (
-  userId: string,
-): Promise<Choice | null> => {
+export async function getByUserId(userId: string) {
   const choice = await prisma.choice.findUnique({
     where: { userId },
   });
 
   if (!choice) return null;
-  return fromDb(choice);
-};
 
-export const chooseDress = async (
-  userId: string,
-  dress: DressColor,
-): Promise<Choice> => {
-  const choice = await prisma.choice.upsert({
-    where: { userId },
-    create: { userId, dress: toDress(dress) },
-    update: { dress: toDress(dress) },
+  return choiceSchema.parse({
+    ...choice,
+    color: dress2Color(choice.dress),
   });
-  return fromDb(choice);
-};
+}
+
+export function upsert(userId: string, dress: number) {
+  return prisma.choice.upsert({
+    where: { userId },
+    create: { userId, dress },
+    update: { dress },
+  });
+}
