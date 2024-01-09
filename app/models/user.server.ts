@@ -63,6 +63,21 @@ export async function getAllUsers() {
   return prisma.user.findMany();
 }
 
+export type GuestType = "groom" | "bride";
+export function toGuestType(guest: string): GuestType {
+  if (guest !== "groom" && guest !== "bride") {
+    throw new Error("Invalid guest type");
+  }
+  return guest;
+}
+export async function getUsersByGuest(guest: GuestType) {
+  return prisma.user.findMany({
+    where: {
+      isGroom: guest === "groom",
+    },
+  });
+}
+
 export function getWinnerUsers() {
   return prisma.choice
     .findMany({

@@ -14,36 +14,53 @@ async function seed() {
   const hashedPassword = await bcrypt.hash("password", 10);
 
   const user = await prisma.user.upsert({
-		where: { id },
+    where: { id },
     create: {
       id,
-			username: "鈴木一郎",
+      username: "鈴木一郎",
       password: {
         create: {
           hash: hashedPassword,
         },
       },
     },
-		update: {
-			username: "鈴木一郎",
-		}
+    update: {
+      username: "鈴木一郎",
+    },
   });
 
-	await prisma.user.upsert({
-		where: { id: "testuser2" },
-		create: {
-			id: "testuser2",
-			username: "佐藤二郎",
-			password: {
-				create: {
-					hash: hashedPassword,
-				},
-			},
-		},
-		update: {
-			username: "佐藤二郎",
-		}
-	});
+  await prisma.user.upsert({
+    where: { id: "testuser2" },
+    create: {
+      id: "testuser2",
+      username: "佐藤二郎",
+      password: {
+        create: {
+          hash: hashedPassword,
+        },
+      },
+    },
+    update: {
+      username: "佐藤二郎",
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { id: "testuser3" },
+    create: {
+      id: "testuser3",
+      username: "田中三郎",
+      password: {
+        create: {
+          hash: hashedPassword,
+        },
+      },
+      isGroom: true,
+    },
+    update: {
+      username: "田中三郎",
+    },
+  });
 
   await prisma.note.create({
     data: {
