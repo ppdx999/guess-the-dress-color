@@ -79,7 +79,7 @@ export default function Index() {
                   </a>
                   <a
                     className="flex items-center justify-center w-64 rounded-lg px-4 py-3 text-white bg-gradient-to-r from-purple-500 to-fuchsia-500"
-                    href={`/login?guest-type=birde`}
+                    href={`/login?guest-type=bride`}
                   >
                     新婦ゲスト
                   </a>
