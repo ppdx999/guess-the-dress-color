@@ -72,7 +72,7 @@ export default function ChosePage() {
   return (
     <main className="relative h-screen">
       <div className="mx-auto h-screen flex justify-center items-center">
-        <div className="absolute inset-0 bg-gray-200" />
+        <div className="absolute inset-0 white" />
         <Form method="post">
           <div className="relative px-4 flex flex-col items-center space-y-16">
             <h1 className="text-2xl text-center font-bold">
@@ -89,14 +89,14 @@ export default function ChosePage() {
                   <DressInput
                     i={1}
                     defaultChecked={dress === 1}
-                    title={"navy & green"}
+                    title={"teal & green"}
                   />
                 </div>
                 <div className="flex justify-center">
                   <DressInput
                     i={2}
                     defaultChecked={dress === 2}
-                    title={"black & blue"}
+                    title={"navy & blue"}
                   />
                 </div>
               </div>
