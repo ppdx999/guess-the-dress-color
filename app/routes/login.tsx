@@ -1,9 +1,9 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
 import * as User from "~/models/user.server";
-import { createUserSession } from "~/session.server";
+import { createUserSession, getUserId } from "~/session.server";
 import { useOptionalUser } from "~/utils";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -35,6 +35,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  // ログインしていたらindexへ
+  const userId = await getUserId(request);
+  if (userId) {
+    return redirect("/");
+  }
+
   const url = new URL(request.url);
   const guestType = url.searchParams.get("guest-type");
 

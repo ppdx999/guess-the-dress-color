@@ -1,64 +1,20 @@
-import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
-import { useEffect, useRef } from "react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 
-import { verifyLogin } from "~/models/user.server";
-import { createUserSession } from "~/session.server";
-import { useOptionalUser } from "~/utils";
+import { requireUser } from "~/session.server";
 
 export const meta: MetaFunction = () => [{ title: "guess the dress colour" }];
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const id = formData.get("id");
-  const password = formData.get("password");
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  // ログインしていなければログイン画面へ
+  const user = await requireUser(request);
 
-  if (typeof id !== "string" || id.length === 0) {
-    return json(
-      { errors: { id: "Id is required", password: null } },
-      { status: 400 },
-    );
-  }
-
-  if (typeof password !== "string" || password.length === 0) {
-    return json(
-      { errors: { id: null, password: "Password is required" } },
-      { status: 400 },
-    );
-  }
-
-  const user = await verifyLogin(id, password);
-
-  if (!user) {
-    return json(
-      { errors: { id: "Invalid id or password", password: null } },
-      { status: 400 },
-    );
-  }
-
-  return createUserSession({
-    redirectTo: "/choose",
-    remember: true,
-    request,
-    userId: user.id,
-  });
+  return json({ user });
 };
 
 export default function Index() {
-  const user = useOptionalUser();
-
-  const actionData = useActionData<typeof action>();
-  const idRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (actionData?.errors?.id) {
-      idRef.current?.focus();
-    } else if (actionData?.errors?.password) {
-      passwordRef.current?.focus();
-    }
-  }, [actionData]);
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <main className="relative min-h-screen bg-white">
@@ -76,66 +32,26 @@ export default function Index() {
             src="app-title.svg"
             alt="guess the dress color"
           />
+          <p className="text-2xl text-center mt-2 pb-6 text-indigo-700">
+            {user.username}様
+          </p>
           <div className="mx-auto mt-10 pt-24 flex justify-center">
-            {user ? (
-              <div className="space-y-6 mx-auto">
-                <Link
-                  to="/choose"
-                  className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-700"
+            <div className="space-y-10 mx-auto">
+              <Link
+                to="/main"
+                className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-700"
+              >
+                ペンライト画面へGo！
+              </Link>
+              <Form method="post" action="/logout" className="space-y-6">
+                <button
+                  type="submit"
+                  className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gray-700"
                 >
-                  START
-                </Link>
-                <Form method="post" action="/logout" className="space-y-6">
-                  <button
-                    type="submit"
-                    className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-700"
-                  >
-                    LOGOUT
-                  </button>
-                </Form>
-              </div>
-            ) : (
-              <div className="space-y-4 mx-auto">
-                <Form method="post" className="space-y-6">
-                  <div className="space-y-4 mx-auto">
-                    <input
-                      ref={idRef}
-                      id="id"
-                      required
-                      // eslint-disable-next-line jsx-a11y/no-autofocus
-                      autoFocus={true}
-                      name="id"
-                      type="id"
-                      autoComplete="username"
-                      placeholder="id"
-                      aria-invalid={actionData?.errors?.id ? true : undefined}
-                      aria-describedby="id-error"
-                      className="flex items-center justify-center w-64 rounded-lg px-4 py-3 text-white bg-gray-700 bg-opacity-80 backdrop-filter backdrop-blur-sm"
-                    />
-                    <input
-                      ref={passwordRef}
-                      id="password"
-                      required
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="password"
-                      aria-invalid={
-                        actionData?.errors?.password ? true : undefined
-                      }
-                      aria-describedby="password-error"
-                      className="flex items-center justify-center w-64 rounded-lg px-4 py-3 text-white bg-gray-700 bg-opacity-80 backdrop-filter backdrop-blur-sm"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="flex items-center justify-center w-64 rounded-2xl px-4 py-3 text-white bg-gradient-to-r from-indigo-500 to-purple-700"
-                  >
-                    START
-                  </button>
-                </Form>
-              </div>
-            )}
+                  はじめから
+                </button>
+              </Form>
+            </div>
           </div>
         </div>
       </div>
